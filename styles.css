@@ -11,6 +11,10 @@
     --glass-highlight: rgba(255, 255, 255, 0.12);
 }
 
+.hidden {
+    display: none !important;
+}
+
 @media (prefers-color-scheme: light) {
     :root {
         --bg-color: #f8fafc;
@@ -192,7 +196,7 @@ label {
     opacity: 1;
 }
 
-input[type="number"] {
+#odometer {
     background: transparent;
     border: none;
     font-size: 56px;
@@ -205,9 +209,74 @@ input[type="number"] {
     transition: color 0.3s ease;
 }
 
-input[type="number"]::placeholder {
+#odometer::placeholder {
     color: var(--text-secondary);
     opacity: 0.3;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.form-input {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 16px;
+    color: var(--text-primary);
+    font-size: 16px;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+@media (prefers-color-scheme: light) {
+    .form-input {
+        background: rgba(0, 0, 0, 0.03);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+}
+
+.form-input:focus {
+    border-color: var(--green);
+}
+
+.primary-btn {
+    background: linear-gradient(135deg, var(--green) 0%, #10b981 100%);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 16px;
+    font-size: 18px;
+    font-weight: 600;
+    width: 100%;
+    margin-top: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px var(--green-glow);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.primary-btn:active {
+    transform: scale(0.98);
+}
+
+.icon-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease;
+}
+
+.icon-btn:hover {
+    background: var(--glass-border);
 }
 
 .unit {

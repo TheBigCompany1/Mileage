@@ -1,8 +1,8 @@
-const LEASE_YEARS = 3;
-const MILES_PER_YEAR = 10000;
-const TOTAL_MILES = LEASE_YEARS * MILES_PER_YEAR;
-const DAILY_ALLOWANCE = MILES_PER_YEAR / 365;
-const START_DATE = new Date('2025-02-24T00:00:00');
+let LEASE_YEARS = 3;
+let MILES_PER_YEAR = 10000;
+let TOTAL_MILES = LEASE_YEARS * MILES_PER_YEAR;
+let DAILY_ALLOWANCE = MILES_PER_YEAR / 365;
+let START_DATE = new Date('2025-02-24T00:00:00');
 
 const odometerInput = document.getElementById('odometer');
 const statusText = document.getElementById('status-text');
@@ -14,6 +14,15 @@ const daysElapsedText = document.getElementById('days-elapsed-text');
 const allowedDailyText = document.getElementById('allowed-daily-text');
 const paceTargetText = document.getElementById('pace-target-text');
 const paceDiffText = document.getElementById('pace-diff-text');
+
+const setupView = document.getElementById('setup-view');
+const dashboardView = document.getElementById('dashboard-view');
+const editProfileBtn = document.getElementById('edit-profile-btn');
+const leaseStartInput = document.getElementById('lease-start');
+const yearlyMileageInput = document.getElementById('yearly-mileage');
+const leaseYearsInput = document.getElementById('lease-years');
+const saveProfileBtn = document.getElementById('save-profile-btn');
+const totalAllowanceText = document.getElementById('total-allowance-text');
 
 function updateDashboard() {
     const currentMileage = parseFloat(odometerInput.value) || 0;
@@ -70,12 +79,65 @@ function updateDashboard() {
     }
 }
 
+// Car Profile Logic
+function loadProfile() {
+    const profile = JSON.parse(localStorage.getItem('car_profile'));
+    if (profile) {
+        LEASE_YEARS = parseFloat(profile.leaseYears) || 3;
+        MILES_PER_YEAR = parseFloat(profile.yearlyMileage) || 10000;
+        TOTAL_MILES = LEASE_YEARS * MILES_PER_YEAR;
+        DAILY_ALLOWANCE = MILES_PER_YEAR / 365;
+        
+        const pieces = profile.startDate.split('-');
+        START_DATE = new Date(pieces[0], pieces[1] - 1, pieces[2]);
+
+        totalAllowanceText.textContent = TOTAL_MILES.toLocaleString();
+        
+        setupView.classList.add('hidden');
+        dashboardView.classList.remove('hidden');
+        editProfileBtn.style.display = 'block';
+        
+        updateDashboard();
+    } else {
+        dashboardView.classList.add('hidden');
+        editProfileBtn.style.display = 'none';
+        setupView.classList.remove('hidden');
+    }
+}
+
+saveProfileBtn.addEventListener('click', () => {
+    if (!leaseStartInput.value || !yearlyMileageInput.value || !leaseYearsInput.value) {
+        alert("Please fill out all fields.");
+        return;
+    }
+    
+    const profile = {
+        startDate: leaseStartInput.value,
+        yearlyMileage: yearlyMileageInput.value,
+        leaseYears: leaseYearsInput.value
+    };
+    
+    localStorage.setItem('car_profile', JSON.stringify(profile));
+    loadProfile();
+});
+
+editProfileBtn.addEventListener('click', () => {
+    const profile = JSON.parse(localStorage.getItem('car_profile')) || {};
+    if (profile.startDate) leaseStartInput.value = profile.startDate;
+    if (profile.yearlyMileage) yearlyMileageInput.value = profile.yearlyMileage;
+    if (profile.leaseYears) leaseYearsInput.value = profile.leaseYears;
+    
+    dashboardView.classList.add('hidden');
+    setupView.classList.remove('hidden');
+    editProfileBtn.style.display = 'none';
+});
+
 // Initialize
 const savedMileage = localStorage.getItem('mileage_last_entered');
 if (savedMileage !== null) {
     odometerInput.value = savedMileage;
 }
-updateDashboard();
+loadProfile();
 
 odometerInput.addEventListener('input', updateDashboard);
 
